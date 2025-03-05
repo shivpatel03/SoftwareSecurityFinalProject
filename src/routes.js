@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const peopleController = require('./controllers/people');
+const jobController = require('./controllers/jobs');
+const clientController = require('./controllers/client');
 
 // get all contractors
 router.get('/contractors', peopleController.getAllPeople);
@@ -13,6 +15,14 @@ router.post('/contractor/:name', peopleController.addContractor);
 router.get('/check-contractor', peopleController.checkContractor);
 
 
-router.get('jobs', peopleController.getAllJobs);
+// get all assigned jobs
+router.get('/jobs', jobController.getAllJobs);
+
+// add a new job
+router.post('/add-jobs', jobController.addJob);
+
+
+// add a new client
+router.post('/add-client', clientController.addClient);
 
 module.exports = router;

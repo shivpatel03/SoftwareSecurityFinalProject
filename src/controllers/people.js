@@ -72,6 +72,12 @@ const checkContractor = async (req, res) => {
         const [personRows] = await pool.query('SELECT name FROM person WHERE id = ?', [personId]);
         const contractor_name = personRows[0].name;
 
+        // check if there is a job for this person at this location
+        const [jobRows] = await pool.query('SELECT id, assigned_contractor, day FROM jobs WHERE assigned_contractor = ? AND day = CURDATE()', [personId]);
+        if (!jobRows) {
+            return res.status(200).json({ error: "No job found for " + contractor_name + " today" });
+        }
+
         // use the personId to get the hash and check if it's correct
         const [contractorRows] = await pool.query('SELECT * FROM contractor WHERE personId = ?', [personId]);
         const saved_hash = contractorRows[0].hash;
