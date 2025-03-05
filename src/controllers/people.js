@@ -59,41 +59,72 @@ const checkContractor = async (req, res) => {
     const pin = req.body.pin;
     const cardUID = req.body.uid;
 
-    if (!pin) {
-        return res.status(200).json({ error: "A PIN is required" });
+    if (!pin || !cardUID) {
+        return res.status(400).json({ error: "Both PIN and card UID are required" });
     }
 
     try {
-        // use the UID to determine which contracto r it is
-        const [rows] = await pool.query('SELECT * FROM card WHERE uid = ?', [cardUID]);
-        personId = rows[0].personId;
+        // Use the UID to determine which contractor it is
+        const [cardRows] = await pool.query('SELECT * FROM card WHERE uid = ?', [cardUID]);
+        
+        // Check if card exists
+        if (cardRows.length === 0) {
+            return res.status(404).json({ error: "No contractor found with this card ID" });
+        }
+        
+        const personId = cardRows[0].personId;
 
-        // get person name using personId
+        // Get person name using personId
         const [personRows] = await pool.query('SELECT name FROM person WHERE id = ?', [personId]);
         const contractor_name = personRows[0].name;
 
-        // check if there is a job for this person at this location
-        const [jobRows] = await pool.query('SELECT id, assigned_contractor, day FROM jobs WHERE assigned_contractor = ? AND day = CURDATE()', [personId]);
-        if (!jobRows) {
+        // Check if there is a job for this person at this location
+        const [jobRows] = await pool.query(
+            'SELECT j.id, j.assigned_contractor, j.day, j.clientId, c.name AS client_name ' +
+            'FROM jobs j ' +
+            'JOIN client c ON j.clientId = c.clientId ' +
+            'WHERE j.assigned_contractor = ? AND j.day = CURDATE()', 
+            [personId]
+        );
+        
+        if (jobRows.length === 0) {
             return res.status(200).json({ error: "No job found for " + contractor_name + " today" });
         }
+        
+        const client_name = jobRows[0].client_name;  // Use joined client name
 
-        // use the personId to get the hash and check if it's correct
+        // Use the personId to get the hash and check if it's correct
         const [contractorRows] = await pool.query('SELECT * FROM contractor WHERE personId = ?', [personId]);
+        
+        if (contractorRows.length === 0) {
+            return res.status(404).json({ error: "Person found but not registered as a contractor" });
+        }
+        
         const saved_hash = contractorRows[0].hash;
 
-        // check if the combinations are the same
-        enteredHash = cardUID + pin;
-        if (enteredHash != saved_hash) {
-            return res.status(200).json({ error: "Invalid PIN" });
+        // Check if the combinations are the same
+        const enteredHash = cardUID + pin;
+        if (enteredHash !== saved_hash) {
+            return res.status(401).json({ error: "Invalid PIN" });
         } else {
-            return res.status(200).json({ message: "Welcome, " + contractor_name + "!" });
+            return res.status(200).json({ 
+                message: contractor_name + " has a job at " + client_name + " today",
+                jobId: jobRows[0].id,
+                contractorId: personId,
+                contractorName: contractor_name,
+                clientId: jobRows[0].clientId,
+                clientName: client_name,
+                date: jobRows[0].day
+            });
         }
     } catch (error) {
-        res.status(500).json({ error: "An error occurred while trying to check if this person is a contractor" });
+        console.error(error);
+        res.status(500).json({ 
+            error: "An error occurred while trying to check if this person is a contractor",
+            details: error.message
+        });
     }
-}
-
+};
 
 module.exports = {
     getAllPeople,

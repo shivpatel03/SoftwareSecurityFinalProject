@@ -22,7 +22,7 @@ router.get('/jobs', jobController.getAllJobs);
 router.post('/add-jobs', jobController.addJob);
 
 
-// add a new client
+// add a new client (body should have name and address)
 router.post('/add-client', clientController.addClient);
 
 module.exports = router;
