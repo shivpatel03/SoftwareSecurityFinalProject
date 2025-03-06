@@ -10,13 +10,14 @@ const getAllPeople = async (req, res) => {
 }   
 
 const addContractor = async (req, res) => {
-    pin = req.body.pin;
     contractor_name = req.params.name;
+
+    contractor_pin = req.body.pin;
     contractor_email = req.body.email;
     contractor_company = req.body.company;
     contractor_dept = req.body.department;
 
-    if (!contractor_name || !pin){
+    if (!contractor_name || !contractor_pin){
         return res.status(200).json({ error: "A name and PIN are required" })
     }
 
@@ -28,21 +29,22 @@ const addContractor = async (req, res) => {
 
         const uid = generateUID();
 
-        const hash = uid + pin;
+        const hash = uid + contractor_pin;
 
         
         // add the user to the card table
-        await pool.query('INSERT INTO card (personId, uid) VALUES (?, ?)', [personId, uid]);
+        await pool.query('INSERT INTO card (person_id, uid) VALUES (?, ?)', [personId, uid]);
 
         // add the user to the contractor table
-        await pool.query('INSERT INTO contractor (personId, hash) VALUES (?, ?)', [personId, hash]);
+        await pool.query('INSERT INTO contractor (person_id, hashed_code) VALUES (?, ?)', [personId, hash]);
 
         res.status(201).json({ 
             message: "Contractor added successfully",
             contractorId: personId
         });
     } catch (error) {
-        console.log(error());
+        // res.status(500).json(error);
+        console.log(error);
         res.status(500).json({ error: "An error occurred while trying to add a new contractor" });
     }
 
