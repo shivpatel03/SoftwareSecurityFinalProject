@@ -19,3 +19,7 @@ const addClient = async (req, res) => {
         res.status(500).json({ error: "An error occurred while trying to add a new client" });
     }
 }
+
+module.exports = {
+    addClient
+};

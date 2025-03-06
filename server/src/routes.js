@@ -3,7 +3,7 @@ const router = express.Router();
 
 const peopleController = require('./controllers/people');
 const jobController = require('./controllers/jobs');
-const clientController = require('./controllers/client');
+const clientController = require('./controllers/clients');
 
 // get all contractors
 router.get('/contractors', peopleController.getAllPeople);
