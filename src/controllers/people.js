@@ -2,12 +2,21 @@ const pool = require('../config/db');
 
 const getAllContractors = async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM contractors');
-        res.json(rows);
+        const [rows] = await pool.query(
+            'SELECT c.person_id, p.name, p.email, p.company, p.department ' +
+            'FROM contractor c ' +
+            'JOIN person p ON c.person_id = p.id'
+        );
+        
+        res.status(200).json(rows);
     } catch (error) {
         console.log(error);
+        res.status(500).json({ 
+            error: "An error occurred while retrieving contractors",
+            details: error.message
+        });
     }
-}   
+}
 
 const addContractor = async (req, res) => {
     contractor_name = req.params.name;
