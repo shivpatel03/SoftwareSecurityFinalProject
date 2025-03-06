@@ -18,7 +18,7 @@ router.get('/check-contractor', peopleController.checkContractor);
 // get all assigned jobs
 router.get('/jobs', jobController.getAllJobs);
 
-// add a new job
+// add a new job (body contains clientId)
 router.post('/add-jobs', jobController.addJob);
 
 

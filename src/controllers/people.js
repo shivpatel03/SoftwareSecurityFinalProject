@@ -67,24 +67,30 @@ const checkContractor = async (req, res) => {
 
     try {
         // Use the UID to determine which contractor it is
-        const [cardRows] = await pool.query('SELECT * FROM card WHERE uid = ?', [cardUID]);
+        const [cardRows] = await pool.query('SELECT * FROM card WHERE UID = ?', [cardUID]);
         
         // Check if card exists
         if (cardRows.length === 0) {
             return res.status(404).json({ error: "No contractor found with this card ID" });
         }
         
-        const personId = cardRows[0].personId;
+        const personId = cardRows[0].person_id;
 
         // Get person name using personId
         const [personRows] = await pool.query('SELECT name FROM person WHERE id = ?', [personId]);
+        
+        // Check if person exists
+        if (personRows.length === 0) {
+            return res.status(404).json({ error: "No person found with this ID" });
+        }
+        
         const contractor_name = personRows[0].name;
 
         // Check if there is a job for this person at this location
         const [jobRows] = await pool.query(
-            'SELECT j.id, j.assigned_contractor, j.day, j.clientId, c.name AS client_name ' +
+            'SELECT j.id, j.assigned_contractor, j.day, j.client_id, c.name AS client_name ' +
             'FROM jobs j ' +
-            'JOIN client c ON j.clientId = c.clientId ' +
+            'JOIN client c ON j.client_id = c.client_id ' +
             'WHERE j.assigned_contractor = ? AND j.day = CURDATE()', 
             [personId]
         );
@@ -93,16 +99,16 @@ const checkContractor = async (req, res) => {
             return res.status(200).json({ error: "No job found for " + contractor_name + " today" });
         }
         
-        const client_name = jobRows[0].client_name;  // Use joined client name
+        const client_name = jobRows[0].client_name;
 
         // Use the personId to get the hash and check if it's correct
-        const [contractorRows] = await pool.query('SELECT * FROM contractor WHERE personId = ?', [personId]);
+        const [contractorRows] = await pool.query('SELECT * FROM contractor WHERE person_id = ?', [personId]);
         
         if (contractorRows.length === 0) {
             return res.status(404).json({ error: "Person found but not registered as a contractor" });
         }
         
-        const saved_hash = contractorRows[0].hash;
+        const saved_hash = contractorRows[0].hashed_code;
 
         // Check if the combinations are the same
         const enteredHash = cardUID + pin;
@@ -114,7 +120,7 @@ const checkContractor = async (req, res) => {
                 jobId: jobRows[0].id,
                 contractorId: personId,
                 contractorName: contractor_name,
-                clientId: jobRows[0].clientId,
+                clientId: jobRows[0].client_id,
                 clientName: client_name,
                 date: jobRows[0].day
             });
