@@ -6,23 +6,14 @@ const jobController = require('./controllers/jobs');
 const clientController = require('./controllers/clients');
 
 // get all contractors
-router.get('/contractors', peopleController.getAllPeople);
+router.get('/contractors', peopleController.getAllContractors); // get all contractors
+router.post('/contractor/:name', peopleController.addContractor); // add new contractor (body includes PIN, email, company, department)
+router.get('/check-contractor', peopleController.checkContractor); // validates contractor (body includes PIN and card UID)
 
-// add a new contractor (body should have PIN, email, company, department)
-router.post('/contractor/:name', peopleController.addContractor);
+router.get('/jobs', jobController.getAllJobs); // get all jobs
+router.post('/add-jobs', jobController.addJob); // add a job (body includes contractor, client ID, and day of work)
 
-// check if a person is a contractor (body should have PIN and card UID), should be called when user enters the facility and enters their PIN
-router.get('/check-contractor', peopleController.checkContractor);
-
-
-// get all assigned jobs
-router.get('/jobs', jobController.getAllJobs);
-
-// add a new job (body contains clientId)
-router.post('/add-jobs', jobController.addJob);
-
-
-// add a new client (body should have name and address)
-router.post('/add-client', clientController.addClient);
+router.post('/add-client', clientController.addClient); // add a client to the system (body includes client's name and building address)
+router.get('/clients', clientController.getAllClients); // get all clients 
 
 module.exports = router;

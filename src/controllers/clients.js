@@ -10,16 +10,26 @@ const addClient = async (req, res) => {
     }
 
     try {
-        await pool.execute('INSERT INTO clients (name, address) VALUES (?, ?)', [client_name, client_address]);
+        await pool.execute('INSERT INTO client (name, address) VALUES (?, ?)', [client_name, client_address]);
         res.status(201).json({ 
             message: "Client added successfully",
         });
     } catch (error) {
-        console.log(error());
+        console.log(error);
         res.status(500).json({ error: "An error occurred while trying to add a new client" });
     }
 }
 
+const getAllClients = async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM client');
+        res.json(rows);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
-    addClient
+    addClient,
+    getAllClients
 }

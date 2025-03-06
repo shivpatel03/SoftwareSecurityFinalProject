@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 
-const getAllPeople = async (req, res) => {
+const getAllContractors = async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM contractors');
         res.json(rows);
@@ -135,7 +135,7 @@ const checkContractor = async (req, res) => {
 };
 
 module.exports = {
-    getAllPeople,
+    getAllContractors,
     addContractor,
     checkContractor
 }
