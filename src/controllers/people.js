@@ -105,7 +105,7 @@ const checkContractor = async (req, res) => {
         );
         
         if (jobRows.length === 0) {
-            return res.status(200).json({ error: "No job found for " + contractor_name + " today" });
+            return res.status(200).json({ message: "No job found for " + contractor_name + " today" });
         }
         
         const client_name = jobRows[0].client_name;
