@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AddClient = () => {
+const AddClient = ({ onClientAdded }) => {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [status, setStatus] = useState('');
@@ -30,7 +30,8 @@ const AddClient = () => {
         // Reset form
         setName('');
         setAddress('');
-        window.location.reload();
+        // Call the callback to refresh the list
+        onClientAdded();
       } else {
         setStatus(`Error: ${data.message || 'Failed to add client'}`);
       }

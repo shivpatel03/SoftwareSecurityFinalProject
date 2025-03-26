@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-const JobsList = () => {
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
+const JobsList = ({ jobs, showPastJobs, setShowPastJobs, onJobDeleted, onJobCompleted }) => {
   const [error, setError] = useState('');
   const [clients, setClients] = useState([]);
-  const [showPastJobs, setShowPastJobs] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleDelete = async (jobId, clientName) => {
     const isConfirmed = window.confirm(
@@ -29,8 +27,7 @@ const JobsList = () => {
         throw new Error('Failed to delete job');
       }
 
-      // Refresh the jobs list
-      await fetchJobs(showPastJobs);
+      onJobDeleted();
     } catch (error) {
       setError(`Failed to delete job: ${error.message}`);
     }
@@ -58,35 +55,16 @@ const JobsList = () => {
         throw new Error('Failed to complete job');
       }
 
-      // Refresh the jobs list
-      await fetchJobs(showPastJobs);
+      onJobCompleted();
     } catch (error) {
       setError(`Failed to complete job: ${error.message}`);
     }
   };
 
-  const fetchJobs = async (isPastJobs) => {
-    try {
-      const endpoint = isPastJobs ? '/api/past-jobs' : '/api/jobs';
-      const jobsResponse = await fetch(`http://localhost:4000${endpoint}`);
-      
-      if (!jobsResponse.ok) {
-        throw new Error(`Failed to fetch jobs: ${jobsResponse.status}`);
-      }
-      
-      const jobsData = await jobsResponse.json();
-      setJobs(jobsData);
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-      setError(`Failed to load jobs: ${error.message}`);
-    }
-  };
-
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchClients = async () => {
       try {
         setLoading(true);
-        // First fetch clients to have their names for reference
         const clientsResponse = await fetch('http://localhost:4000/api/clients');
         
         if (!clientsResponse.ok) {
@@ -95,9 +73,6 @@ const JobsList = () => {
         
         const clientsData = await clientsResponse.json();
         setClients(clientsData);
-        
-        // Then fetch jobs based on current toggle state
-        await fetchJobs(showPastJobs);
       } catch (error) {
         console.error('Error fetching data:', error);
         setError(`Failed to load data: ${error.message}`);
@@ -106,8 +81,8 @@ const JobsList = () => {
       }
     };
 
-    fetchData();
-  }, [showPastJobs]); // Re-run when showPastJobs changes
+    fetchClients();
+  }, []); // Only fetch clients once when component mounts
 
   // Helper function to find client name by ID
   const getClientNameById = (clientId) => {

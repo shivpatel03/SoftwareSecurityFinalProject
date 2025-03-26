@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const AddJob = () => {
+const AddJob = ({ onJobAdded }) => {
   const [clientId, setClientId] = useState('');
   const [contractorId, setContractorId] = useState('');
   const [workDate, setWorkDate] = useState('');
@@ -80,6 +80,7 @@ const AddJob = () => {
       if (response.ok) {
         setStatus('Job added successfully!');
         setWorkDate('');
+        onJobAdded(); // Call the callback to refresh the jobs list
       } else {
         setStatus(`Error: ${data.message || data.error || 'Failed to add job'}`);
       }

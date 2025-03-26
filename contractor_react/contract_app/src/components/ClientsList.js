@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-const ClientsList = () => {
-  const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(true);
+const ClientsList = ({ clients, onClientDeleted }) => {
   const [error, setError] = useState('');
 
   const handleDelete = async (clientId, clientName) => {
@@ -28,35 +26,13 @@ const ClientsList = () => {
         throw new Error('Failed to delete client');
       }
 
-      // Refresh the page to show updated list
-      window.location.reload();
+      // Call the callback to refresh the list
+      onClientDeleted();
     } catch (error) {
       setError(`Failed to delete client: ${error.message}`);
     }
   };
 
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/api/clients');
-        
-        if (!response.ok) {
-          throw new Error(`Server responded with status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        setClients(data);
-      } catch (error) {
-        setError(`Failed to load clients: ${error.message}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClients();
-  }, []);
-
-  if (loading) return <div className="loading">Loading clients...</div>;
   if (error) return <div className="error">{error}</div>;
 
   return (
