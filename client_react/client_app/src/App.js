@@ -6,11 +6,43 @@ function App() {
   const [uid, setUid] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
+  const [jobData, setJobData] = useState(null);
+
+  const handleComplete = async (jobId, contractorName) => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to mark ${contractorName}'s job as complete?`
+    );
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:4000/api/complete-job', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: jobId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to complete job');
+      }
+
+      const data = await response.json();
+      setStatus(`Job completed successfully: ${data.message}`);
+      setJobData(null); // Clear the job data after completion
+    } catch (error) {
+      setStatus(`Error completing job: ${error.message}`);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setStatus('');
+    setJobData(null);
 
     try {
       // Using POST method to send body data with correct field names
@@ -38,6 +70,9 @@ function App() {
       
       if (response.ok) {
         setStatus(`Valid contractor: ${data.message}`);
+        if (data.jobId) {
+          setJobData(data);
+        }
       } else {
         setStatus(`Error: ${data.message || 'Contractor validation failed'}`);
       }
@@ -82,6 +117,24 @@ function App() {
         {status && (
           <div className={status.includes('Error') ? 'error' : 'success'}>
             {status}
+          </div>
+        )}
+        {jobData && jobData.jobId && (
+          <div className="job-actions" style={{ marginTop: '20px', textAlign: 'center' }}>
+            <button
+              onClick={() => handleComplete(jobData.jobId, jobData.contractorName)}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#2ecc71',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '1em'
+              }}
+            >
+              Mark Job as Complete
+            </button>
           </div>
         )}
       </main>
