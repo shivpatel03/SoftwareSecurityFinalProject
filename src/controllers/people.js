@@ -141,10 +141,33 @@ const checkContractor = async (req, res) => {
             details: error.message
         });
     }
+}
+
+const deleteContractor = async (req, res) => {
+    const personId = req.body.personId;
+
+    console.log(personId);
+
+    if (!personId) {
+        return res.status(400).json({ error: "Contractor ID is required" });
+    }
+
+    try {
+        await pool.query('DELETE FROM contractor WHERE person_id = ?', [personId]);
+        await pool.query('DELETE FROM card WHERE person_id = ?', [personId]);
+        await pool.query('DELETE FROM person WHERE id = ?', [personId]);
+
+
+        res.status(200).json({ message: "Contractor deleted successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "An error occurred while trying to delete the contractor" });
+    }
 };
 
 module.exports = {
     getAllContractors,
     addContractor,
-    checkContractor
+    checkContractor,
+    deleteContractor
 }

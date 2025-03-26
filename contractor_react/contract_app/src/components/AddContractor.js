@@ -38,6 +38,8 @@ const AddContractor = () => {
         setEmail('');
         setCompany('');
         setDepartment('');
+        // Refresh the page to show the new contractor
+        window.location.reload();
       } else {
         setStatus(`Error: ${data.message || 'Failed to add contractor'}`);
       }

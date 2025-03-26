@@ -5,6 +5,31 @@ const ContractorsList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const handleDelete = async (personId) => {
+    try {
+      console.log('Deleting contractor with ID:', personId);
+      const requestBody = { personId };
+      console.log('Request body:', requestBody);
+      
+      const response = await fetch('http://localhost:4000/api/delete-contractor', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete contractor');
+      }
+
+      // Refresh the contractors list
+      window.location.reload();
+    } catch (error) {
+      setError(`Failed to delete contractor: ${error.message}`);
+    }
+  };
+
   useEffect(() => {
     const fetchContractors = async () => {
       try {
@@ -42,17 +67,30 @@ const ContractorsList = () => {
               <th>Email</th>
               <th>Company</th>
               <th>Department</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {contractors.map((contractor, index) => (
-              <tr key={index}>
-                <td>{contractor.name}</td>
-                <td>{contractor.email}</td>
-                <td>{contractor.company}</td>
-                <td>{contractor.department}</td>
-              </tr>
-            ))}
+            {contractors.map((contractor, index) => {
+              console.log('Contractor object:', contractor);
+              return (
+                <tr key={index}>
+                  <td>{contractor.name}</td>
+                  <td>{contractor.email}</td>
+                  <td>{contractor.company}</td>
+                  <td>{contractor.department}</td>
+                  <td>
+                    <button 
+                      onClick={() => handleDelete(contractor.person_id)}
+                      className="delete-btn"
+                      title="Delete contractor"
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

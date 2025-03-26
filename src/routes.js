@@ -8,6 +8,7 @@ const clientController = require('./controllers/clients');
 router.get('/contractors', peopleController.getAllContractors); // get all contractors
 router.post('/contractor/:name', peopleController.addContractor); // add new contractor (body includes PIN, email, company, department)
 router.post('/check-contractor', peopleController.checkContractor); // validates contractor (body includes PIN and card UID)
+router.delete('/delete-contractor', peopleController.deleteContractor); // deletes contractor (body includes person ID)
 
 router.get('/jobs', jobController.getAllJobs); // get all jobs
 router.post('/add-empty-job', jobController.addJobWithoutContractor) // add a job (body includes client ID and day of work)
