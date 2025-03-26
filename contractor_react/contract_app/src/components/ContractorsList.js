@@ -5,7 +5,17 @@ const ContractorsList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const handleDelete = async (personId) => {
+  const handleDelete = async (personId, contractorName) => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete "${contractorName}"?\n\n` +
+      `WARNING: This will also delete all jobs assigned to this contractor.\n` +
+      `This action cannot be undone!`
+    );
+
+    if (!isConfirmed) {
+      return;
+    }
+
     try {
       console.log('Deleting contractor with ID:', personId);
       const requestBody = { personId };
@@ -81,7 +91,7 @@ const ContractorsList = () => {
                   <td>{contractor.department}</td>
                   <td>
                     <button 
-                      onClick={() => handleDelete(contractor.person_id)}
+                      onClick={() => handleDelete(contractor.person_id, contractor.name)}
                       className="delete-btn"
                       title="Delete contractor"
                     >

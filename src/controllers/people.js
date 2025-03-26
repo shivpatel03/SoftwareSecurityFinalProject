@@ -146,13 +146,12 @@ const checkContractor = async (req, res) => {
 const deleteContractor = async (req, res) => {
     const personId = req.body.personId;
 
-    console.log(personId);
-
     if (!personId) {
         return res.status(400).json({ error: "Contractor ID is required" });
     }
 
     try {
+        await pool.query('DELETE FROM jobs WHERE assigned_contractor = ?', [personId]);
         await pool.query('DELETE FROM contractor WHERE person_id = ?', [personId]);
         await pool.query('DELETE FROM card WHERE person_id = ?', [personId]);
         await pool.query('DELETE FROM person WHERE id = ?', [personId]);
