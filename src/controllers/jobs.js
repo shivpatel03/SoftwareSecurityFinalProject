@@ -103,7 +103,7 @@ const completeJob = async (req, res) => {
 }
 
 const deleteJob = async (req, res) => {
-    jobId = req.body.jobId;
+    jobId = req.body.id;
 
     if (!jobId) {
         return res.status(200).json({ error: "A job ID is required to delete a job" });
