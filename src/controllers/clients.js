@@ -30,15 +30,15 @@ const getAllClients = async (req, res) => {
 }
 
 const deleteClient = async (req, res) => {
-    const clientId = req.body.clientId;
+    const clientId = req.body.client_id;
 
     if (!clientId) {
         return res.status(400).json({ error: "Client ID is required" });
     }
 
     try {
+        await pool.query('DELETE FROM jobs WHERE client_id = ?', [clientId]);
         await pool.query('DELETE FROM client WHERE client_id = ?', [clientId]);
-        await pool.query('DELETE FROM job WHERE client_id = ?', [clientId]);
 
         res.status(200).json({ message: "Client deleted successfully" });
     } catch (error) {

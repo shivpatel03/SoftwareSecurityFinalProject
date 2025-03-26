@@ -30,6 +30,7 @@ const AddClient = () => {
         // Reset form
         setName('');
         setAddress('');
+        window.location.reload();
       } else {
         setStatus(`Error: ${data.message || 'Failed to add client'}`);
       }

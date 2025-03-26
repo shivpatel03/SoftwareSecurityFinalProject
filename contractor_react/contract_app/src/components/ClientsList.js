@@ -5,6 +5,36 @@ const ClientsList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const handleDelete = async (clientId, clientName) => {
+    // Show confirmation popup
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete client "${clientName}"?\n\nWARNING: This will also delete all jobs associated with this client!`
+    );
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:4000/api/delete-client', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ client_id: clientId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete client');
+      }
+
+      // Refresh the page to show updated list
+      window.location.reload();
+    } catch (error) {
+      setError(`Failed to delete client: ${error.message}`);
+    }
+  };
+
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -41,14 +71,24 @@ const ClientsList = () => {
               <th>ID</th>
               <th>Name</th>
               <th>Address</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {clients.map((client) => (
-              <tr key={client.id}>
-                <td>{client.id}</td>
+              <tr key={client.client_id}>
+                <td>{client.client_id}</td>
                 <td>{client.name}</td>
                 <td>{client.address}</td>
+                <td>
+                  <button 
+                    onClick={() => handleDelete(client.client_id, client.name)}
+                    className="delete-btn"
+                    title="Delete client"
+                  >
+                    🗑️
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
