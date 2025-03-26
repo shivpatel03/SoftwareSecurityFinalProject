@@ -2,7 +2,7 @@ const pool = require('../config/db');
 
 const getAllJobs = async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM jobs');
+        const [rows] = await pool.query('SELECT * FROM jobs WHERE complete IS NULL AND day >= CURDATE()', []);
         res.json(rows);
     } catch (error) {
         console.log(error);
@@ -67,7 +67,7 @@ const addJob = async (req, res) => {
             } else  {
                 // job doesn't exist, create it with this contractor
                 await pool.execute(
-                    'INSERT INTO jobs (assigned_contractor, client_id, day) VALUES (?, ?, ?)', 
+                    'INSERT INTO jobs (assigned_contractor, client_id, day, complete) VALUES (?, ?, ?, 0)', 
                     [assigned_contractor, clientId, day]
                 );
                 
@@ -86,8 +86,42 @@ const addJob = async (req, res) => {
     }
 }
 
+const completeJob = async (req, res) => {
+    jobId = req.body.id;
+
+    if (!jobId) {
+        return res.status(200).json({ error: "A job ID is required to complete a job" });
+    }
+
+    try {
+        await pool.execute('UPDATE jobs SET complete = true WHERE id = ?', [jobId]);
+        res.status(200).json({ message: "Job completed successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "An error occurred while trying to complete a job" });
+    }
+}
+
+const deleteJob = async (req, res) => {
+    jobId = req.body.jobId;
+
+    if (!jobId) {
+        return res.status(200).json({ error: "A job ID is required to delete a job" });
+    }
+
+    try {
+        await pool.execute('DELETE FROM jobs WHERE id = ?', [jobId]);
+        res.status(200).json({ message: "Job deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "An error occurred while trying to delete a job" });  
+    }
+}
+
 module.exports = {
     getAllJobs,
     addJobWithoutContractor,
-    addJob
+    addJob, 
+    completeJob,
+    deleteJob
 }
