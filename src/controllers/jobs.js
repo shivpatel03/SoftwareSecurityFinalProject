@@ -118,10 +118,20 @@ const deleteJob = async (req, res) => {
     }
 }
 
+const getPastJobs = async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM jobs WHERE complete = 1 OR day < CURDATE()', []);
+        res.json(rows);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     getAllJobs,
     addJobWithoutContractor,
     addJob, 
     completeJob,
-    deleteJob
+    deleteJob,
+    getPastJobs
 }

@@ -15,6 +15,7 @@ router.post('/add-empty-job', jobController.addJobWithoutContractor) // add a jo
 router.post('/add-job', jobController.addJob); // add a job (body includes contractor, client ID, and day of work) - if there is already an assignee, this will replace them
 router.post('/complete-job', jobController.completeJob); // complete a job (body includes job ID)
 router.delete('/delete-job', jobController.deleteJob); // delete an existing job that is coming up (body includes job ID)
+router.get('/past-jobs', jobController.getPastJobs); // get all past jobs
 
 router.post('/add-client', clientController.addClient); // add a client to the system (body includes client's name and building address)
 router.get('/clients', clientController.getAllClients); // get all clients 
