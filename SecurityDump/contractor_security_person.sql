@@ -29,7 +29,7 @@ CREATE TABLE `person` (
   `company` varchar(100) NOT NULL,
   `department` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `person` (
 
 LOCK TABLES `person` WRITE;
 /*!40000 ALTER TABLE `person` DISABLE KEYS */;
-INSERT INTO `person` VALUES (16,'Shiv Patel','shiv.patel@gmail.com','Shiv\'s Company','Network Engineering'),(17,'Nathan Yohannes','nathan.y@gmail.com','Nathan\'s Company','Cybersecurity'),(18,'Sabeh Khalid','sabeh.khalid@gmail.com','Sabeh\'s company','Cybersecurity 1');
+INSERT INTO `person` VALUES (17,'Nathan Yohannes','nathan.y@gmail.com','Nathan\'s Company','Cybersecurity'),(18,'Sabeh Khalid','sabeh.khalid@gmail.com','Sabeh\'s company','Cybersecurity 1'),(21,'Joshua Cardoz','joshc@gmail.com','Company','Software Development'),(23,'Shiv Patel','shiv.patel@gmail.com','Shiv\'s Company','CyberSecurity'),(24,'John Doe','jd@gmail.com','JD\'s Company','123 JD Rd.');
 /*!40000 ALTER TABLE `person` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-06 23:11:48
+-- Dump completed on 2025-03-26 23:17:40

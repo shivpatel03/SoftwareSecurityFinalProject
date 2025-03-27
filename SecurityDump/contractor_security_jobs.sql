@@ -27,12 +27,13 @@ CREATE TABLE `jobs` (
   `assigned_contractor` int DEFAULT NULL,
   `client_id` int NOT NULL,
   `day` date NOT NULL,
+  `complete` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `assigned_contractor` (`assigned_contractor`),
   KEY `jobs_ibfk_2` (`client_id`),
   CONSTRAINT `jobs_ibfk_1` FOREIGN KEY (`assigned_contractor`) REFERENCES `contractor` (`person_id`),
   CONSTRAINT `jobs_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `client` (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +42,7 @@ CREATE TABLE `jobs` (
 
 LOCK TABLES `jobs` WRITE;
 /*!40000 ALTER TABLE `jobs` DISABLE KEYS */;
-INSERT INTO `jobs` VALUES (8,16,6,'2025-03-06');
+INSERT INTO `jobs` VALUES (12,17,7,'2025-04-27',1),(14,18,6,'2025-03-26',1),(19,18,7,'2025-03-26',1),(20,17,12,'2025-03-26',1);
 /*!40000 ALTER TABLE `jobs` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-06 23:11:48
+-- Dump completed on 2025-03-26 23:17:40
